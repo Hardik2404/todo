@@ -53,10 +53,20 @@ def update(sno):
 
 @app.route("/delete/<int:sno>")
 def delete(sno):
-    todo=Todo.query.filter_by(sno=sno).first()
-    db.session.delete(todo)
-    db.session.commit()
-    return redirect("/")
+    try:
+        # Fetch the todo item by sno
+        todo = Todo.query.filter_by(sno=sno).first()
+        if not todo:
+            return "Todo not found", 404  # Return a 404 error if the todo does not exist
+
+        # Delete the todo item
+        db.session.delete(todo)
+        db.session.commit()
+        return redirect("/")
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error deleting todo: {e}")
+        return "An error occurred while deleting the todo.", 500
 
 @app.route("/product")
 def product():
